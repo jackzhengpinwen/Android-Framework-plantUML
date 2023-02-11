@@ -1,0 +1,22 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+SystemServer -> SystemServer: startSystemUi()
+SystemServer -> SystemUIService: Context.startSystemUi()
+SystemUIService -> SystemUIApplication: SystemUIApplication.startServicesIfNeeded()
+SystemUIApplication -> SystemUIApplication: 通过配置 config_systemUIServiceComponents
+SystemUIApplication -> SystemBars: start()
+SystemBars -> SystemBars: createStatusBarFromConfig 通过配置 config_statusBarComponent 创建 StatusBar
+SystemBars -> StatusBar: start()
+StatusBar -> StatusBar: createAndAddWindows()
+StatusBar -> StatusBar: makeStatusBarView()
+StatusBar -> StatusBar: inflateStatusBarWindow() inflate() 加载布局 R.layout.super_status_bar 赋值给 mStatusBarWindow
+StatusBar -> StatusBar: 创建 CollapsedStatusBarFragment 替换 mStatusBarWindow 中的 R.id.status_bar_container
+StatusBar -> CollapsedStatusBarFragment: 加载布局 R.layout.status_bar 这个是 Launcher 界面的状态栏
+StatusBar -> StatusBar: R.layout.super_status_bar 加载 status_bar_expanded 布局，这个布局包含了下拉状态栏的布局 \n status_bar_expanded 布局包含快速设置布局和系统消息布局，分别是：qs_frame 和 notification_stack_scroller \n 下拉状态栏包含在 qs_frame 的 quick_status_bar_expanded_header 中的 quick_status_bar_header_system_icons布局：显示时钟和电池 \n quick_qs_status_icons布局：显示日期和系统图标, 两个布局均由QuickStatusBarHeader.java控制 \n 
+StatusBar -> StatusBarWindowController: add()
+StatusBarWindowController -> WindowManagerImpl: addView() 添加 mStatusBarWindow
+
+@enduml
